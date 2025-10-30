@@ -1,7 +1,7 @@
 ---
 layout: post
 title: My .vimrc File
-date: 2025-10-22
+date: 2025-10-29
 ---
 This is my `.vimrc` file. It's super simple, but has proven its utility over the past several years. It enables line numbers, auto-indent, and syntax highlighting. It also replaces indents with four spaces.
 ```
