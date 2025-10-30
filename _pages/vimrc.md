@@ -3,10 +3,10 @@ layout: post
 title: My .vimrc File
 date: 2025-10-22
 ---
-This is my `.vimrc` file. It's super simple – really nothing special – but it has proven to be a useful and versatile basic configuration.
+This is my `.vimrc` file. It's super simple, but has proven its utility over the past several years. It enables line numbers, auto-indent, and syntax highlighting. It also replaces indents with four spaces.
 ```
 syntax on
 set tabstop=4 softtabstop=-1 shiftwidth=0 expandtab number autoindent
 autocmd FileType make set noexpandtab shiftwidth=8 softtabstop=0
 ```
-This page exists mostly for my own convenience when setting up a new machine. There's nothing special about my `.vimrc` file; it's s
+This page exists mostly for my own convenience; it's invaluable when setting up a new machine.
