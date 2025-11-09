@@ -183,7 +183,7 @@ It is perhaps more useful to plot the power of the coefficients in decibels. The
     <img src="../../../assets/fourier_coeff_pwr_db.svg"
          alt="">
 </figure>
-The first harmonics $a_{-2}$ and $a_{2}$ are at around –28.6 dB, meaning that they contribute around 729 times less power than the fundamental components. The power of the higher harmonics decreases further. By this metric, the approximation is quite an excellent one.
+The first harmonics $a_{-2}$ and $a_{2}$ are at around –28.6 dB, meaning that they contribute around 729 times less power than the fundamental components. The power of the higher harmonics decreases further. By this metric, the approximation is quite excellent.
 
 The story changes if we consider the human ear, which is *quite* sensitive. Below are two audio clips: one is a pure sinusoid of frequency 440 Hz (the note "A"), and the other is the parabolic approximation. Listen to both – can you tell which is which?
 
@@ -200,7 +200,7 @@ The story changes if we consider the human ear, which is *quite* sensitive. Belo
     </audio>
 </div>
 
-We calculated earlier that the signal-to-noise ratio of the parabolic approximation is around 28.4 dB. While this may be decent in an electrical system, it is quite unimpressive to the ear. Most music is recorded using gear that provides an SNR of at least 70 dB. Thus, if you listen to the clips in a quiet room (or with noise-canceling earphones), it should be fairly easy to tell them apart. If you listen in a noisy environment, it becomes nearly impossible to hear the difference.
+We calculated earlier that the signal-to-noise ratio of the parabolic approximation is around 28.4 dB. While this may be decent in an electrical system, it is quite unimpressive to the ear. Most music is recorded using equipment that provides an SNR of at least 70 dB. Thus, if you listen to the clips in a quiet room (or with noise-canceling earphones), it should be fairly easy to tell them apart. If you listen in a noisy environment, it becomes nearly impossible to hear the difference.
 
 ## Concluding Thoughts
 I always love tangible connections between mathematics and the physical world. I take comfort in the occasional reminder that the math *works* – that these integrals and sums and Fourier series really do mean something.
