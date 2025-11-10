@@ -6,7 +6,7 @@ title: About Me
 ## Welcome
 Hi! I'm Erk – an electrical engineering student in my final year at UC Santa Barbara.
 
-For now I'm making occasional blog posts and reference pages. Later I plan to create a set of notes for various classes I have taken. I will also document some of my future projects.
+For now, I'm making occasional blog posts and reference pages. Eventually, I hope to create a set of notes for various classes I have taken. I will also document some of my projects.
 
 ## About Me
 Electrical engineering has been a lifelong passion of mine. I've done several projects involving a mix of power electronics and embedded systems, typically applied to RC drones and planes (see [SinESC](https://github.com/SAR-mango/SinESC)).
