@@ -15,5 +15,5 @@ I'm mostly into hardware, but I also enjoy programming for a direct hardware app
 
 I'm from San Diego and have lived in California all my life.
 
-## Research Interests
-I'm interested in signal processing applications of mixed-signal circuits, and perhaps also RF. I hope to narrow this down by late 2025.
+## Research and Career Interests
+I'm interested in signal-processing applications of mixed-signal circuits, as well as feedback-centric approaches to circuit design. I hope to have a career as an analog/mixed-signal circuit designer.
