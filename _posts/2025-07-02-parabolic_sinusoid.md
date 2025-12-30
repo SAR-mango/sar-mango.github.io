@@ -178,12 +178,12 @@ From our equation for $a_{k}$, we observe that the magnitude of the Fourier seri
     <img src="../../../assets/fourier_coeff_mag.svg"
          alt="">
 </figure>
-It is perhaps more useful to plot the power of the coefficients in decibels. The values are normalized such that the fundamental coefficients $a_{-1}$ and $a_{1}$ are at 0 dB. 
+It is perhaps more informative to plot the power of the coefficients in decibels. The values are normalized such that the fundamental coefficients $a_{-1}$ and $a_{1}$ are at 0 dB. 
 <figure>
     <img src="../../../assets/fourier_coeff_pwr_db.svg"
          alt="">
 </figure>
-The first harmonics $a_{-2}$ and $a_{2}$ are at around –28.6 dB, meaning that they contribute around 729 times less power than the fundamental components. The power of the higher harmonics decreases further. By this metric, the approximation is quite excellent.
+The first nonzero harmonics $a_{-3}$ and $a_{3}$ are at around –28.6 dB, meaning that they contribute around 729 times less power than the fundamental components. The power of the higher harmonics decreases further. By this metric, the approximation is quite excellent.
 
 The story changes if we consider the human ear, which is *quite* sensitive. Below are two audio clips: one is a pure sinusoid of frequency 440 Hz (the note "A"), and the other is the parabolic approximation. Listen to both – can you tell which is which?
 
