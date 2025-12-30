@@ -1,0 +1,1000 @@
+---
+layout: none
+title: Fourier Series Playground
+date: 2025-12-29
+---
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fourier Series Playground</title>
+    <style>
+        :root {
+            --bg: #f6f7f9; --text: #111827; --muted: #6b7280; --border: #e5e7eb;
+            --blue: #2563eb; --red: #ef4444; --green: #059669; --rose: #e11d48;
+            --card: #ffffff; --hover: #f3f4f6; --shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.1);
+            --radius: 14px;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            background: var(--bg);
+            color: var(--text);
+        }
+        .container { max-width: 1120px; margin: 0 auto; padding: 16px; }
+        h1 { font-size: 1.875rem; font-weight: 600; margin: 0 0 6px; }
+        h2 { font-size: 1rem; font-weight: 600; margin: 0; }
+
+        .grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        @media (min-width: 1024px) {
+            .grid { grid-template-columns: 2fr 1fr; }
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .row-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        .toolbar { margin-bottom: 10px; }
+
+        .btn {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: .9rem;
+        }
+        .btn:hover { background: var(--hover); }
+        .btn-primary { background: var(--green); color: #fff; border-color: var(--green); }
+        .btn-primary:hover { background: #047857; }
+        .btn-danger { background: var(--rose); color: #fff; border-color: var(--rose); }
+        .btn-danger:hover { background: #be123c; }
+
+        .input {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: .95rem;
+            max-width: 100%;
+        }
+        .input[type="number"] { width: 96px; }
+        .small { font-size: .8rem; color: var(--muted); }
+        .label { color: var(--muted); font-size: .9rem; }
+        .stack { display: grid; gap: 10px; }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .col { display: flex; flex-direction: column; gap: 8px; }
+        .grow { flex: 1 1 auto; }
+        .end { justify-content: flex-end; }
+        .space { margin-top: 16px; }
+
+        /* normalize range inputs */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            border: 0;
+            outline: none;
+        }
+        input[type="range"]:not(.mag):not(.phv) { height: 16px; }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--blue);
+            border: 0;
+            margin-top: -2px;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--blue);
+            border: 0;
+        }
+
+        /* horizontal track */
+        input[type="range"]:not(.mag):not(.phv)::-webkit-slider-runnable-track {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 999px;
+        }
+        input[type="range"]:not(.mag):not(.phv)::-moz-range-track {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 999px;
+        }
+
+        /* Dense harmonic sliders */
+        #harmSection .subtitle { color: var(--muted); font-size: .85rem; margin-top: 6px; }
+        #harmGrid {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 2px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }
+        .harm-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            width: 16px;
+            flex: 0 0 16px;
+        }
+
+        .mag-wrap, .phv-wrap {
+            width: 16px;
+            height: 110px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* magnitude: vertical slider via rotation */
+        .mag {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 110px;
+            height: 12px;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%) rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* phase: vertical slider via rotation */
+        .phv {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 110px;
+            height: 12px;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%) rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* track (still horizontal before rotation) */
+        .mag::-webkit-slider-runnable-track,
+        .phv::-webkit-slider-runnable-track {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 999px;
+        }
+        .mag::-moz-range-track,
+        .phv::-moz-range-track {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 999px;
+        }
+
+        .klabel {
+            font-size: 9px;
+            line-height: 1;
+            color: #6b7280;
+            user-select: none;
+            text-align: center;
+            width: 16px;
+            height: 10px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fourier Series Playground</h1>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <div class="row">
+                    <h2 style="margin-top:-10px">Draw One Period</h2>
+                    <div class="row-wrap toolbar">
+                        <button id="btnClear" class="btn">Clear</button>
+                        <button id="btnNormalize" class="btn">Normalize</button>
+                        <div class="row-wrap">
+                            <button id="btnPresetSine" class="btn">Sine</button>
+                            <button id="btnPresetSquare" class="btn">Square</button>
+                            <button id="btnPresetSaw" class="btn">Saw</button>
+                            <button id="btnPresetTriangle" class="btn">Triangle</button>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="waveCanvas" width="800" height="220"></canvas>
+                <p class="small" style="margin-top:8px">Blue = drawing; red dashed = reconstruction</p>
+            </div>
+
+            <div class="col">
+                <div class="card">
+                    <h2>Playback</h2>
+                    <div class="stack space">
+                        <div class="row">
+                            <label class="label">Fund. Frequency f<sub>0</sub> (Hz)</label>
+                            <input id="inpFreq" class="input" type="number" min="20" max="20000" step="1" />
+                        </div>
+                        <div class="row">
+                            <label class="label">Fund. Period T<sub>0</sub> (ms)</label>
+                            <input id="inpPeriod" class="input" type="number" min="0.05" max="50" step="0.01" />
+                        </div>
+                        <div class="row">
+                            <label class="label">Volume</label>
+                            <input id="inpVol" class="grow" type="range" min="0" max="1" step="0.01" />
+                        </div>
+                        <div class="row end">
+                            <button id="btnToggle" class="btn btn-primary">Play</button>
+                        </div>
+                        <div class="row">
+                            <span class="label">Harmonics to analyze (max <strong id="maxHLabel" style="color:#111827"></strong>)</span>
+                            <input id="inpKAnalyze" class="input" type="number" min="1" value="64" />
+                        </div>
+                    </div>
+                    <p class="small" style="margin:10px 0 0">Playback includes all harmonics up to the largest integer k such that kf<sub>0</sub> ≤ 20 kHz.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="harmSection" class="card space">
+            <h2>Harmonics</h2>
+            <div class="subtitle">Magnitudes (0–1) at the top, phases (0–2π) below. Column 0 is DC.</div>
+            <div id="harmGrid" class="space" aria-label="Harmonic sliders"></div>
+        </div>
+    </div>
+
+    <script>
+        // diagnostics were removed – no btnTests / testLog code should exist.
+
+        // ======= State =======
+        const N_SAMPLES = 1024;
+        const TWO_PI = 2 * Math.PI;
+        const PHASE_WRAP_EPS = 2e-3;
+
+        function wrapPhase01(phi) {
+            let w = ((phi % TWO_PI) + TWO_PI) % TWO_PI;
+            if (w < PHASE_WRAP_EPS || w > (TWO_PI - PHASE_WRAP_EPS)) w = 0;
+            return w;
+        }
+
+        function sliderPhaseToInternal(raw) {
+            const v = Number(raw) || 0;
+            if (v < PHASE_WRAP_EPS || v > (TWO_PI - PHASE_WRAP_EPS)) return 0;
+            return v;
+        }
+
+        const state = {
+            drawBuf: new Float32Array(N_SAMPLES).fill(0),
+            isDrawing: false,
+            lastSampleIdx: null,
+            lastSampleVal: 0,
+            periodMs: 1000 / 440,
+            lastValidPeriodMs: 1000 / 440,
+            dc: 0,
+            volume: 0.4,
+            coeffs: {},
+            KforAnalysis: 64,
+            audioCtx: null,
+            osc: null,
+            gain: null,
+            sampleRateFallback: 44100,
+            analyzeScheduled: false,
+            showDraw: false
+        };
+
+        // ======= DOM =======
+        const $ = (id) => document.getElementById(id);
+        const canvas = $('waveCanvas');
+        const ctx2d = canvas.getContext('2d');
+
+        const btnClear = $('btnClear');
+        const btnNormalize = $('btnNormalize');
+        const btnPresetSine = $('btnPresetSine');
+        const btnPresetSquare = $('btnPresetSquare');
+        const btnPresetSaw = $('btnPresetSaw');
+        const btnPresetTriangle = $('btnPresetTriangle');
+
+        const inpKAnalyze = $('inpKAnalyze');
+
+        const inpPeriod = $('inpPeriod');
+        const inpFreq = $('inpFreq');
+        const maxHLabel = $('maxHLabel');
+        const inpVol = $('inpVol');
+        const btnToggle = $('btnToggle');
+
+        const harmGrid = $('harmGrid');
+
+        // ======= HiDPI & Resize =======
+        function resizeCanvasToDisplaySize() {
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            const width = Math.max(1, Math.floor(rect.width * dpr));
+            const height = Math.max(1, Math.floor(rect.height * dpr));
+            if (canvas.width !== width || canvas.height !== height) {
+                canvas.width = width;
+                canvas.height = height;
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvasToDisplaySize();
+            draw();
+        });
+
+        // ======= Helpers =======
+        function f0() {
+            return state.periodMs > 0 ? 1000 / state.periodMs : 0;
+        }
+
+        function lastValidF0() {
+            return state.lastValidPeriodMs > 0 ? 1000 / state.lastValidPeriodMs : 0;
+        }
+
+        function currentSampleRate() {
+            return state.audioCtx && state.audioCtx.sampleRate ? state.audioCtx.sampleRate : state.sampleRateFallback;
+        }
+
+        function nyquist() {
+            return currentSampleRate() / 2;
+        }
+
+        function harmonicsMax() {
+            const base = Math.max(f0(), 1e-9);
+            const by20k = Math.floor(20000 / base);
+            const byNyq = Math.floor((nyquist() - 1) / base);
+            return Math.max(0, Math.min(by20k, byNyq));
+        }
+
+        function clampKtoMax(v) {
+            const H = harmonicsMax();
+            return Math.max(1, Math.min(H, Math.floor(v)));
+        }
+
+        function invalidateDrawing() {
+            state.showDraw = false;
+        }
+
+        function setCoeff(k, next) {
+            const base = state.coeffs[k] || { amp: 0, phase: 0 };
+            const out = {
+                amp: typeof base.amp === 'number' ? base.amp : 0,
+                phase: typeof base.phase === 'number' ? base.phase : 0
+            };
+            if (next && typeof next.amp === 'number') out.amp = next.amp;
+            if (next && typeof next.phase === 'number') out.phase = next.phase;
+            state.coeffs[k] = out;
+            invalidateDrawing();
+            draw();
+            updateAudioIfPlaying();
+        }
+
+        function synthesizePeriod(coeffs, dc, maxK) {
+            const N = N_SAMPLES;
+            const arr = new Float32Array(N);
+            for (let n = 0; n < N; n++) arr[n] = dc;
+
+            const H = Math.max(1, Math.min(maxK || harmonicsMax(), harmonicsMax()));
+            for (let k = 1; k <= H; k++) {
+                const c = coeffs[k];
+                if (!c) continue;
+                const A = c.amp * Math.cos(c.phase);
+                const B = -c.amp * Math.sin(c.phase);
+                for (let n = 0; n < N; n++) {
+                    const th = (2 * Math.PI * k * n) / N;
+                    arr[n] += A * Math.cos(th) + B * Math.sin(th);
+                }
+            }
+            return arr;
+        }
+
+        function analyzeFromBuffer(buf) {
+            const K = Math.min(state.KforAnalysis, harmonicsMax());
+            const x = buf;
+            const N = x.length;
+
+            let dcSum = 0;
+            for (let n = 0; n < N; n++) dcSum += x[n];
+            const dcVal = dcSum / N;
+
+            // phase becomes numerically meaningless when magnitude is small.
+            // use a mixed absolute/relative threshold so presets like triangle don't show random phases at high k.
+            const ABS_EPS = 1e-4;
+            const REL_EPS = 1e-3;
+
+            const amps = new Float64Array(K + 1);
+            const phis = new Float64Array(K + 1);
+            let maxAmp = 0;
+
+            for (let k = 1; k <= K; k++) {
+                let Ak = 0;
+                let Bk = 0;
+                for (let n = 0; n < N; n++) {
+                    const th = (2 * Math.PI * k * n) / N;
+                    const xn = x[n];
+                    Ak += xn * Math.cos(th);
+                    Bk += xn * Math.sin(th);
+                }
+                Ak = (2 / N) * Ak;
+                Bk = (2 / N) * Bk;
+                const amp = Math.hypot(Ak, Bk);
+                const phi = Math.atan2(-Bk, Ak);
+                amps[k] = amp;
+                phis[k] = phi;
+                if (amp > maxAmp) maxAmp = amp;
+            }
+
+            const PHASE_EPS = Math.max(ABS_EPS, REL_EPS * maxAmp);
+
+            const next = {};
+            for (let k = 1; k <= K; k++) {
+                const amp = amps[k];
+                const phi = amp < PHASE_EPS ? 0 : phis[k];
+                next[k] = { amp, phase: phi };
+            }
+
+            state.dc = dcVal;
+            state.coeffs = next;
+            updateAudioIfPlaying();
+            syncSlidersFromState();
+        }
+
+        function analyzeFromDrawing() {
+            analyzeFromBuffer(state.drawBuf);
+        }
+
+        function scheduleAnalyze() {
+            if (state.analyzeScheduled) return;
+            state.analyzeScheduled = true;
+            requestAnimationFrame(() => {
+                state.analyzeScheduled = false;
+                analyzeFromDrawing();
+                draw();
+            });
+        }
+
+        function ensureAudioContext() {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return null;
+            if (!state.audioCtx) state.audioCtx = new AC();
+            if (state.audioCtx.state === 'suspended') state.audioCtx.resume().catch(() => {});
+            if (state.audioCtx.sampleRate) state.sampleRateFallback = state.audioCtx.sampleRate;
+            return state.audioCtx;
+        }
+
+        function createPeriodicWave(ctx) {
+            if (!ctx) return null;
+            const H = Math.max(1, harmonicsMax());
+            const real = new Float32Array(H + 1);
+            const imag = new Float32Array(H + 1);
+            real[0] = state.dc;
+            for (let k = 1; k <= H; k++) {
+                const c = state.coeffs[k] || { amp: 0, phase: 0 };
+                real[k] = c.amp * Math.cos(c.phase);
+                imag[k] = -c.amp * Math.sin(c.phase);
+            }
+            try {
+                return ctx.createPeriodicWave(real, imag, { disableNormalization: true });
+            } catch (_) {
+                try {
+                    return ctx.createPeriodicWave(real, imag);
+                } catch (e2) {
+                    console.warn('createPeriodicWave failed', e2);
+                    return null;
+                }
+            }
+        }
+
+        function setToggleUi(isPlaying) {
+            if (isPlaying) {
+                btnToggle.textContent = 'Stop';
+                btnToggle.classList.remove('btn-primary');
+                btnToggle.classList.add('btn-danger');
+            } else {
+                btnToggle.textContent = 'Play';
+                btnToggle.classList.remove('btn-danger');
+                btnToggle.classList.add('btn-primary');
+            }
+        }
+
+        function startAudio() {
+            stopAudio();
+            const ctx = ensureAudioContext();
+            if (!ctx) {
+                console.warn('AudioContext not available');
+                return;
+            }
+            const gain = ctx.createGain();
+            gain.gain.value = state.volume;
+            state.gain = gain;
+
+            const osc = ctx.createOscillator();
+            const wave = createPeriodicWave(ctx);
+            if (wave) {
+                try { osc.setPeriodicWave(wave); }
+                catch (_) { osc.type = 'sine'; }
+            } else {
+                osc.type = 'sine';
+            }
+
+            const f = f0();
+            osc.frequency.value = f > 0 ? f : 1;
+            osc.connect(gain).connect(ctx.destination);
+            osc.start();
+            state.osc = osc;
+            setToggleUi(true);
+        }
+
+        function stopAudio() {
+            if (state.osc) {
+                try { state.osc.stop(); } catch (_) {}
+                try { state.osc.disconnect(); } catch (_) {}
+            }
+            state.osc = null;
+            if (state.gain) {
+                try { state.gain.disconnect(); } catch (_) {}
+            }
+            state.gain = null;
+            setToggleUi(false);
+        }
+
+        function updateAudioIfPlaying() {
+            if (!state.osc || !state.audioCtx) return;
+            const wave = createPeriodicWave(state.audioCtx);
+            if (wave) {
+                try { state.osc.setPeriodicWave(wave); } catch (_) {}
+            }
+            try { state.osc.frequency.value = f0() > 0 ? f0() : 1; } catch (_) {}
+            try { if (state.gain) state.gain.gain.value = state.volume; } catch (_) {}
+        }
+
+        // ======= Drawing input =======
+        function getCanvasPoint(evt) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clientX = (evt.touches && evt.touches.length) ? evt.touches[0].clientX : evt.clientX;
+            const clientY = (evt.touches && evt.touches.length) ? evt.touches[0].clientY : evt.clientY;
+            const x = (clientX - rect.left) * scaleX;
+            const y = (clientY - rect.top) * scaleY;
+            return { x, y };
+        }
+
+        function xToIndex(x) {
+            const W = canvas.width;
+            const clamped = Math.max(0, Math.min(W - 1, x));
+            const t = clamped / (W - 1);
+            return Math.round(t * (N_SAMPLES - 1));
+        }
+
+        const Y_LIM = 1.1;
+
+        function yToVal(y) {
+            const H = canvas.height;
+            const clamped = Math.max(0, Math.min(H, y));
+            return Y_LIM * (1 - (clamped / H) * 2);
+        }
+
+        function writeSample(idx, v) {
+            const i = Math.max(0, Math.min(N_SAMPLES - 1, idx));
+            const val = Math.max(-1, Math.min(1, v));
+            state.drawBuf[i] = val;
+        }
+
+        function writeLine(idx0, val0, idx1, val1) {
+            const a = Math.max(0, Math.min(N_SAMPLES - 1, Math.round(idx0)));
+            const b = Math.max(0, Math.min(N_SAMPLES - 1, Math.round(idx1)));
+            if (a === b) {
+                writeSample(a, val1);
+                return;
+            }
+            const start = Math.min(a, b);
+            const end = Math.max(a, b);
+            for (let i = start; i <= end; i++) {
+                const t = (i - a) / (b - a);
+                const v = val0 + (val1 - val0) * t;
+                state.drawBuf[i] = Math.max(-1, Math.min(1, v));
+            }
+        }
+
+        function handleDownLike(e) {
+            const p = getCanvasPoint(e);
+            const idx = xToIndex(p.x);
+            const val = yToVal(p.y);
+            state.isDrawing = true;
+            state.lastSampleIdx = idx;
+            state.lastSampleVal = val;
+            state.showDraw = true;
+            writeSample(idx, val);
+            scheduleAnalyze();
+            draw();
+        }
+
+        function handleMoveLike(e) {
+            if (!state.isDrawing) return;
+            const p = getCanvasPoint(e);
+            const idx = xToIndex(p.x);
+            const val = yToVal(p.y);
+            if (state.lastSampleIdx == null) writeSample(idx, val);
+            else writeLine(state.lastSampleIdx, state.lastSampleVal, idx, val);
+            state.lastSampleIdx = idx;
+            state.lastSampleVal = val;
+            state.showDraw = true;
+            scheduleAnalyze();
+            draw();
+        }
+
+        function handleUpLike() {
+            state.isDrawing = false;
+            state.lastSampleIdx = null;
+        }
+
+        canvas.addEventListener('mousedown', handleDownLike);
+        canvas.addEventListener('mousemove', handleMoveLike);
+        canvas.addEventListener('mouseup', handleUpLike);
+        canvas.addEventListener('mouseleave', handleUpLike);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleDownLike(e); }, { passive: false });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handleMoveLike(e); }, { passive: false });
+        canvas.addEventListener('touchend', handleUpLike);
+
+        // ======= Drawing & Preview =======
+        function draw() {
+            const W = canvas.width;
+            const H = canvas.height;
+            const N = N_SAMPLES;
+            ctx2d.clearRect(0, 0, W, H);
+
+            ctx2d.strokeStyle = '#e5e7eb';
+            ctx2d.lineWidth = 1;
+            for (let i = 0; i <= 8; i++) {
+                const x = (i / 8) * W;
+                ctx2d.beginPath();
+                ctx2d.moveTo(x, 0);
+                ctx2d.lineTo(x, H);
+                ctx2d.stroke();
+            }
+            for (let i = 0; i <= 4; i++) {
+                const y = (i / 4) * H;
+                ctx2d.beginPath();
+                ctx2d.moveTo(0, y);
+                ctx2d.lineTo(W, y);
+                ctx2d.stroke();
+            }
+
+            ctx2d.strokeStyle = '#9ca3af';
+            ctx2d.beginPath();
+            ctx2d.moveTo(0, H / 2);
+            ctx2d.lineTo(W, H / 2);
+            ctx2d.stroke();
+
+            if (state.showDraw) {
+                ctx2d.strokeStyle = '#2563eb';
+                ctx2d.lineWidth = 2;
+                ctx2d.beginPath();
+                for (let n = 0; n < N; n++) {
+                    const t = n / (N - 1);
+                    const x = t * (W - 1);
+                    const y = (1 - (state.drawBuf[n] / Y_LIM + 1) / 2) * H;
+                    if (n === 0) ctx2d.moveTo(x, y);
+                    else ctx2d.lineTo(x, y);
+                }
+                ctx2d.stroke();
+            }
+
+            const preview = synthesizePeriod(state.coeffs, state.dc, state.KforAnalysis);
+            ctx2d.strokeStyle = '#ef4444';
+            ctx2d.setLineDash([6, 6]);
+            ctx2d.beginPath();
+            for (let n = 0; n < N; n++) {
+                const t = n / (N - 1);
+                const x = t * (W - 1);
+                const y = (1 - (preview[n] / Y_LIM + 1) / 2) * H;
+                    if (n === 0) ctx2d.moveTo(x, y);
+                    else ctx2d.lineTo(x, y);
+            }
+            ctx2d.stroke();
+            ctx2d.setLineDash([]);
+        }
+
+        // ======= Harmonic slider grid =======
+        function buildHarmonicSliders(K) {
+            harmGrid.innerHTML = '';
+
+            // k = 0 (DC)
+            {
+                const col = document.createElement('div');
+                col.className = 'harm-col';
+
+                const mag = document.createElement('input');
+                mag.type = 'range';
+                mag.className = 'mag';
+                mag.min = '-1';
+                mag.max = '1';
+                mag.step = '0.001';
+                mag.value = String(state.dc);
+
+                const label = document.createElement('div');
+                label.className = 'klabel';
+                label.textContent = '0';
+
+                mag.addEventListener('input', () => {
+                    state.dc = Number(mag.value) || 0;
+                    invalidateDrawing();
+                    draw();
+                    updateAudioIfPlaying();
+                });
+
+                const magWrap = document.createElement('div');
+                magWrap.className = 'mag-wrap';
+                magWrap.appendChild(mag);
+
+                const phWrap = document.createElement('div');
+                phWrap.className = 'phv-wrap';
+
+                col.appendChild(magWrap);
+                col.appendChild(label);
+                col.appendChild(phWrap);
+                harmGrid.appendChild(col);
+            }
+
+            // k >= 1 harmonics
+            for (let k = 1; k <= K; k++) {
+                const col = document.createElement('div');
+                col.className = 'harm-col';
+
+                const mag = document.createElement('input');
+                mag.type = 'range';
+                mag.className = 'mag';
+                mag.min = '0';
+                mag.max = '1';
+                mag.step = '0.001';
+                mag.value = String((state.coeffs[k]?.amp) ?? 0);
+
+                const ph = document.createElement('input');
+                ph.type = 'range';
+                ph.className = 'phv';
+                ph.min = '0';
+                ph.max = String(TWO_PI);
+                ph.step = '0.001';
+                const rawPhi = (state.coeffs[k]?.phase) ?? 0;
+                ph.value = String(wrapPhase01(rawPhi));
+
+                const label = document.createElement('div');
+                label.className = 'klabel';
+                label.textContent = String(k);
+
+                mag.addEventListener('input', () => {
+                    const amp = Number(mag.value) || 0;
+                    setCoeff(k, { amp });
+                });
+
+                ph.addEventListener('input', () => {
+                    setCoeff(k, { phase: sliderPhaseToInternal(ph.value) });
+                });
+
+                const magWrap = document.createElement('div');
+                magWrap.className = 'mag-wrap';
+                magWrap.appendChild(mag);
+
+                const phWrap = document.createElement('div');
+                phWrap.className = 'phv-wrap';
+                phWrap.appendChild(ph);
+
+                col.appendChild(magWrap);
+                col.appendChild(label);
+                col.appendChild(phWrap);
+                harmGrid.appendChild(col);
+            }
+        }
+
+        function syncSlidersFromState() {
+            const K = Math.min(state.KforAnalysis, harmonicsMax());
+            const cols = harmGrid.children;
+
+            // k = 0 (DC)
+            if (cols[0]) {
+                const mag = cols[0].querySelector('input.mag');
+                if (mag) mag.value = String(state.dc);
+            }
+
+            // k >= 1
+            for (let k = 1; k <= K; k++) {
+                const col = cols[k];
+                if (!col) continue;
+                const magWrap = col.children[0];
+                const phWrap = col.children[2];
+                const mag = magWrap ? magWrap.querySelector('input') : null;
+                const ph = phWrap ? phWrap.querySelector('input') : null;
+                const c = state.coeffs[k] || { amp: 0, phase: 0 };
+                if (mag) mag.value = String(c.amp);
+                if (ph) ph.value = String(wrapPhase01(c.phase));
+            }
+        }
+
+        function refreshKAndSliders(fromUserInput) {
+            const H = harmonicsMax();
+            if (!fromUserInput) state.KforAnalysis = Math.max(1, Math.min(state.KforAnalysis, H));
+            else state.KforAnalysis = clampKtoMax(state.KforAnalysis);
+
+            inpKAnalyze.max = String(H);
+            inpKAnalyze.value = String(state.KforAnalysis);
+            maxHLabel.textContent = String(H);
+
+            buildHarmonicSliders(state.KforAnalysis);
+            analyzeFromDrawing();
+            draw();
+        }
+
+        // ======= UI wiring =======
+        function effectiveFreq() {
+            if (inpFreq.value === '') return lastValidF0();
+            const v = Number(inpFreq.value);
+            if (!isFinite(v)) return lastValidF0();
+            return Math.max(20, Math.min(20000, v));
+        }
+
+        function updatePeriodFromFreqInput() {
+            const f = effectiveFreq();
+            state.periodMs = 1000 / f;
+            state.lastValidPeriodMs = state.periodMs;
+            inpPeriod.value = state.periodMs.toFixed(2);
+            refreshKAndSliders(false);
+            updateAudioIfPlaying();
+        }
+
+        function updateFreqInputFromPeriod() {
+            const f = f0();
+            inpFreq.value = String(Math.round(f));
+            state.lastValidPeriodMs = state.periodMs;
+            refreshKAndSliders(false);
+            updateAudioIfPlaying();
+        }
+
+        inpPeriod.value = state.periodMs.toFixed(2);
+        inpPeriod.addEventListener('input', () => {
+            const val = Number(inpPeriod.value);
+            const next = Math.max(0.05, Math.min(50, isFinite(val) ? val : 0.05));
+            state.periodMs = next;
+            state.lastValidPeriodMs = next;
+            inpFreq.value = String(Math.round(1000 / next));
+            updateFreqInputFromPeriod();
+        });
+
+        inpFreq.value = '440';
+        inpFreq.addEventListener('input', () => {
+            if (inpFreq.value === '') {
+                draw();
+                updateAudioIfPlaying();
+                return;
+            }
+            updatePeriodFromFreqInput();
+        });
+
+        inpVol.value = state.volume;
+        inpVol.addEventListener('input', () => {
+            state.volume = Number(inpVol.value) || 0;
+            updateAudioIfPlaying();
+        });
+
+        btnToggle.addEventListener('click', () => {
+            if (state.osc) stopAudio();
+            else startAudio();
+        });
+
+        btnClear.addEventListener('click', () => {
+            state.drawBuf.fill(0);
+            state.showDraw = true;
+            scheduleAnalyze();
+            draw();
+        });
+
+        btnNormalize.addEventListener('click', () => {
+            const keep_show_draw = state.showDraw;
+            const src = keep_show_draw ? state.drawBuf : synthesizePeriod(state.coeffs, state.dc, state.KforAnalysis);
+
+            for (let i = 0; i < N_SAMPLES; i++) state.drawBuf[i] = src[i];
+
+            let mean = 0;
+            for (let i = 0; i < N_SAMPLES; i++) mean += state.drawBuf[i];
+            mean /= N_SAMPLES;
+            for (let i = 0; i < N_SAMPLES; i++) state.drawBuf[i] -= mean;
+
+            let peak = 0;
+            for (let i = 0; i < N_SAMPLES; i++) peak = Math.max(peak, Math.abs(state.drawBuf[i]));
+            const s = peak > 0 ? 1 / peak : 1;
+            for (let i = 0; i < N_SAMPLES; i++) state.drawBuf[i] *= s;
+
+            analyzeFromBuffer(state.drawBuf);
+            state.showDraw = keep_show_draw;
+            draw();
+        });
+
+        btnPresetSine.addEventListener('click', () => {
+            state.showDraw = true;
+            for (let n = 0; n < N_SAMPLES; n++) state.drawBuf[n] = Math.sin((2 * Math.PI * n) / N_SAMPLES);
+            scheduleAnalyze();
+            draw();
+        });
+
+        btnPresetSquare.addEventListener('click', () => {
+            state.showDraw = true;
+            for (let n = 0; n < N_SAMPLES; n++) {
+                const t = n / N_SAMPLES;
+                state.drawBuf[n] = t < 0.5 ? 1 : -1;
+            }
+            scheduleAnalyze();
+            draw();
+        });
+
+        btnPresetSaw.addEventListener('click', () => {
+            state.showDraw = true;
+            for (let n = 0; n < N_SAMPLES; n++) {
+                const t = n / N_SAMPLES;
+                state.drawBuf[n] = 2 * (t - Math.floor(t + 0.5));
+            }
+            scheduleAnalyze();
+            draw();
+        });
+
+        btnPresetTriangle.addEventListener('click', () => {
+            state.showDraw = true;
+            for (let n = 0; n < N_SAMPLES; n++) {
+                const t = n / N_SAMPLES;
+                const x = 2 * Math.abs(2 * (t - Math.floor(t + 0.5))) - 1;
+                state.drawBuf[n] = -x;
+            }
+            scheduleAnalyze();
+            draw();
+        });
+
+        inpKAnalyze.addEventListener('input', () => {
+            const v = Number(inpKAnalyze.value) || 1;
+            state.KforAnalysis = clampKtoMax(v);
+            refreshKAndSliders(true);
+        });
+
+        function init() {
+            setToggleUi(false);
+            resizeCanvasToDisplaySize();
+            inpFreq.value = '440';
+            inpPeriod.value = state.periodMs.toFixed(2);
+            inpVol.value = state.volume;
+
+            // default K to max at the default frequency
+            state.KforAnalysis = Math.max(1, harmonicsMax());
+            refreshKAndSliders(false);
+            draw();
+        }
+
+        init();
+    </script>
+</body>
+</html>
