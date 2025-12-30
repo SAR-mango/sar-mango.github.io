@@ -1,10 +1,9 @@
 clc; clear; close all;
-int_name = 'latex';
 set(groot, ...
-    'defaultAxesTickLabelInterpreter', int_name, ...
-    'defaultTextInterpreter',              int_name, ...
-    'defaultLegendInterpreter',            int_name, ...
-    'defaultAxesFontSize',                12);
+    'defaultAxesTickLabelInterpreter',  'latex', ...
+    'defaultTextInterpreter',           'latex', ...
+    'defaultLegendInterpreter',         'latex', ...
+    'defaultAxesFontSize',              12);
 %% plots for introduction
 t = 0:0.001:1;
 r = sin(2*pi*t);
@@ -19,8 +18,10 @@ hold on;
 plot(t,r,'LineWidth',2,'Color','#75147c',LineStyle=':');
 hold off;
 grid on;
-legend('Parabolic Approximation','True Sinusoid');
+pbaspect([3,2,1]);
+legend('Parabolic Approximation\,\,\,','True Sinusoid','Interpreter','latex');
 % Format tick labels with LaTeX
 ax = gca;
 ax.XTickLabel = arrayfun(@(x) sprintf('$$%g$$', x), ax.XTick, 'UniformOutput', false);
 ax.YTickLabel = arrayfun(@(y) sprintf('$$%g$$', y), ax.YTick, 'UniformOutput', false);
+exportgraphics(gcf,'/Users/erksampat/dev/sar-mango.github.io/assets/sinusoid_vs_parabola.svg');

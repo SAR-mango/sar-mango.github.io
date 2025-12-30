@@ -22,21 +22,14 @@ xlabel("$$t$$");
 ylabel("$$x(t)$$");
 title("Parabolic Approximation of $$r(t)=\sin(2\pi t)$$");
 grid on;
+pbaspect([3,2,1]);
 ylim([-1.2,1.2]);
 xlim([0,3.3]);
 text(3.15,0,"$$\ldots$$","HorizontalAlignment","center",FontSize=14);
+pbaspect([3,2,1]);
 % Format tick labels with LaTeX
 ax = gca;
 ax.XTickLabel = arrayfun(@(x) sprintf('$$%g$$', x), ax.XTick, 'UniformOutput', false);
 ax.YTickLabel = arrayfun(@(y) sprintf('$$%g$$', y), ax.YTick, 'UniformOutput', false);
 ax.Box = 'on';
-pos = ax.Position;
-xdata = [0,1];
-ydata = [-1.375,-1.375];
-xlim = ax.XLim;
-ylim = ax.YLim;
-% --- convert ----------------------------------------------------------
-xn = pos(1) + pos(3) * (xdata - xlim(1)) / diff(xlim);
-yn = pos(2) + pos(4) * (ydata - ylim(1)) / diff(ylim);
-annotation('arrow',xn,yn,HeadStyle="plain",HeadWidth=8);
-text(0.5,-1.425,"$$T_{0}=1$$",HorizontalAlignment="center");
+exportgraphics(gcf,'/Users/erksampat/dev/sar-mango.github.io/assets/parabolic_approx.svg');

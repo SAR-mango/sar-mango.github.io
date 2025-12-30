@@ -53,4 +53,6 @@ set(gca,'XTickLabel',[]);
 set(gca,'YTickLabel',[]);
 set(gca,'xtick',[]);
 set(gca,'ytick',[]);
-set(gca,'Visible','off')
+set(gca,'Visible','off');
+pbaspect([3,2,1]);
+exportgraphics(gcf,'/Users/erksampat/dev/sar-mango.github.io/assets/fourier_series_illustration.svg');
