@@ -26,7 +26,7 @@ font-family: ['Lora', serif]
 # You can reorder the items to define the link order.
 # If you want to add a new link that isn't here, you'll need to also edit the file _data/social_networks.yml
 social_accounts:
-  email: "esampat@ucsb.edu"
+  email: "esampat@gmail.com"
   github: SAR-mango
   linkedin: erk-sampat-500331245
 
