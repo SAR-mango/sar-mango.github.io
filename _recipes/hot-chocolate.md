@@ -18,7 +18,7 @@ Makes 2 large mugs of hot chocolate.
 ## Recipe
 In a saucepan, throw in a good splash (1–2 shots, depending on how nutty you want it to taste) of the pistachio liqueur. Set heat to high; once it starts boiling, reduce to a fast simmer. Then sprinkle in about 2 tbs of the cocoa powder and stir. Wait for the liquid to reduce by around half to ensure the alcohol has boiled off. Then add a pinch of salt.
 
-For a richer hot chocolate, add in heavy whipping cream – the same volume as the liqueur mixture currently is. Set heat to high, stir, then decrease heat to maintain a light simmer. Then mix in 1-2 tbs of chocolate chips and stir thoroughly until melted.
+For a richer hot chocolate, add in heavy whipping cream – the same volume as the liqueur mixture currently is. Set heat to high, stir, then decrease heat to maintain a light simmer. Then mix in 1–2 tbs of chocolate chips and stir thoroughly until melted.
 
 At this point, chunks of the chocolate and cocoa powder may remain – this is fine. Now add in the milk – enough so that the total volume fills 2 large mugs. Again, raise the heat to warm up the mixture, but don't let it come to a simmer. It should be just above drinking temperature. Keep stirring and try to break up any clumps.
 
