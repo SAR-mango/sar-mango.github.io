@@ -24,8 +24,11 @@
     </div>
     <div class="footer center footer-text">
         <section class="small-font">
-            © 2026 by Erk Sampat
+            © <span id="copyright-year">{{ 'now' | date: '%Y' }}</span> by Erk Sampat
             </section>
      </div>
   </div>
 </footer>
+<script>
+  document.getElementById('copyright-year').textContent = new Date().getFullYear();
+</script>
