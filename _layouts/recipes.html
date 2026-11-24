@@ -1,0 +1,15 @@
+---
+layout: default
+---
+<div class="home">
+  <div class="post-list">
+    <h1 class="post-list-title">{{ page.title }}</h1>
+
+    <div class="article-content recipe-introduction">
+      {{ content }}
+    </div>
+
+    {% assign sorted = site.recipes | sort: 'date' | reverse %}
+    {% include post_list.html posts=sorted %}
+  </div>
+</div>

@@ -19,7 +19,7 @@
         <ul class="page-link">
           {% for item in site.navigations %}
             {% assign info = site.data.nav[item] %}
-            <li><a href="{{ "{{info.link}}" | prepend: site.baseurl }}">{{info.text}}</a></li>
+            <li><a href="{{ info.link | prepend: site.baseurl }}">{{info.text}}</a></li>
           {% endfor %}
         </ul>
       </nav>
