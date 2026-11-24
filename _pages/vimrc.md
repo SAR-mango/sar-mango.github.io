@@ -9,4 +9,4 @@ syntax on
 set tabstop=4 softtabstop=-1 shiftwidth=0 expandtab number autoindent
 autocmd FileType make set noexpandtab shiftwidth=8 softtabstop=0
 ```
-This page exists mostly for my own convenience; it's invaluable when setting up a new machine.
+This page exists mostly for my own convenience; it's invaluable when setting up a new machine (which I find myself doing far more often than one may expect).
